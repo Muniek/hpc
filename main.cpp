@@ -46,10 +46,21 @@ void analytical(vector< vector<double> > &res_a, int size, int computations) {
   } 
 }
 
+double global_error(vector< vector<double> > &analytical_a, vector< vector<double> > &iterative_a, int size)  {
+  double global_e = 0.0;
+  for(int i = 0; i < size; i++) {
+    for(int j = 0; j < size; j++) {
+      global_e += abs(analytical_a[i][j] - iterative_a[i][j]);
+    }
+  }
+  return global_e;
+}
+
 main()  {
   int n = 50;
+  int computations = 50;
   vector< vector<double> > res_serial(n, vector<double>(n));
-  serial(res_serial, n, 100);
+  serial(res_serial, n, computations);
   for(int i = 0; i < n; i++) {
     for(int j = 0; j < n; j++)
       cout << res_serial[i][j] << " ";
@@ -64,4 +75,6 @@ main()  {
     cout << endl;
   } 
   cout << endl;
+  cout << "Global error: " << global_error(res_analytical, res_serial, n);
+  return 0;
 }
