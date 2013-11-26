@@ -4,13 +4,17 @@
 
 using namespace std;
 
+//zeroing the given square array
+void to_zero(vector< vector<double> > &res_a, int size) {
+ for(int i = 0; i < size; i++)
+   for(int j = 0; j < size; j++)
+     res_a[i][j] = 0.0;
+}
+
 //fills given array with data get from serial iteration algorithm
 void serial(vector< vector<double> > &res_a, int size, int computations) {
   double h = 1.0/(size - 1);
-  
-  for(int i = 0; i < size; i++)
-    for(int j = 0; j < size; j++)
-      res_a[i][j] = 0.0;
+  to_zero(res_a, size);
 
   for(int i = 0; i < size - 1; i++)
     res_a[i][0] = pow(sin(M_PI * i * h), 2);
@@ -21,6 +25,26 @@ void serial(vector< vector<double> > &res_a, int size, int computations) {
         res_a[i][j] = 0.25 * (res_a[i - 1][j] + res_a[i + 1][j] + res_a[i][j - 1] + res_a[i][j + 1]); 
 }
 
+//fills given array with data get from analytical algorithm
+void analytical(vector< vector<double> > &res_a, int size, int computations) {
+  double h = 1.0/(size - 1);
+  to_zero(res_a, size);
+
+  for(int i = 0; i < size - 1; i++) {
+    for(int j = 0; j < size - 1; j++) {
+      double x = j * h;
+      double y = i * h;
+
+      for(int ci = 1; ci < computations; ci++) {
+        if (ci == 2) continue;
+
+        double numerator = 4 * (-1 + cos(ci * M_PI)) * (1/sinh(ci * M_PI)) * sin(ci * M_PI * y) * sinh(ci * M_PI * (x - 1));
+        double denominator = (M_PI * ( (-4) * ci + pow(ci, 3)));
+        res_a[i][j] -= numerator / denominator;   
+      } 
+    }
+  } 
+}
 
 main()  {
   int n = 50;
@@ -31,4 +55,13 @@ main()  {
       cout << res_serial[i][j] << " ";
     cout << endl;
   }
+  cout << endl;
+  vector< vector<double> > res_analytical(n, vector<double>(n));
+  analytical(res_analytical, n, 100);
+  for(int i = 0; i < n; i++) {
+    for(int j = 0; j < n; j++)
+      cout << res_analytical[i][j] << " ";
+    cout << endl;
+  } 
+  cout << endl;
 }
