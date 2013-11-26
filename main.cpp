@@ -56,6 +56,10 @@ double global_error(vector< vector<double> > &analytical_a, vector< vector<doubl
   return global_e;
 }
 
+double average_error(vector< vector<double> > &analytical_a, vector< vector<double> > &iterative_a, int size)  {
+  return global_error(analytical_a, iterative_a, size) / size;
+}
+
 main()  {
   int n = 50;
   int computations = 50;
@@ -75,6 +79,7 @@ main()  {
     cout << endl;
   } 
   cout << endl;
-  cout << "Global error: " << global_error(res_analytical, res_serial, n);
+  cout << "Global error: " << global_error(res_analytical, res_serial, n) << endl;
+  cout << "Average error: " << average_error(res_analytical, res_serial, n) << endl;
   return 0;
 }
