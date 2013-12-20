@@ -1,18 +1,18 @@
+#include <stdlib.h>
 #include <iostream>
 #include <cmath>
-#include <vector>
 
 using namespace std;
 
 //zeroing the given square array
-void to_zero(vector< vector<double> > &res_a, int size) {
+void to_zero(double** &res_a, int size) {
  for(int i = 0; i < size; i++)
    for(int j = 0; j < size; j++)
      res_a[i][j] = 0.0;
 }
 
 //fills given array with data get from serial iteration algorithm
-void serial(vector< vector<double> > &res_a, int size, int computations) {
+void serial(double** &res_a, int size, int computations) {
   double h = 1.0/(size - 1);
   to_zero(res_a, size);
 
@@ -26,7 +26,7 @@ void serial(vector< vector<double> > &res_a, int size, int computations) {
 }
 
 //fills given array with data get from analytical algorithm
-void analytical(vector< vector<double> > &res_a, int size, int computations) {
+void analytical(double** &res_a, int size, int computations) {
   double h = 1.0/(size - 1);
   to_zero(res_a, size);
 
@@ -46,7 +46,7 @@ void analytical(vector< vector<double> > &res_a, int size, int computations) {
   } 
 }
 
-double global_error(vector< vector<double> > &analytical_a, vector< vector<double> > &iterative_a, int size)  {
+double global_error(double** &analytical_a, double** &iterative_a, int size)  {
   double global_e = 0.0;
   for(int i = 0; i < size; i++) {
     for(int j = 0; j < size; j++) {
@@ -56,27 +56,45 @@ double global_error(vector< vector<double> > &analytical_a, vector< vector<doubl
   return global_e;
 }
 
-double average_error(vector< vector<double> > &analytical_a, vector< vector<double> > &iterative_a, int size)  {
+double average_error(double** &analytical_a, double** &iterative_a, int size)  {
   return global_error(analytical_a, iterative_a, size) / size;
 }
 
-main()  {
-  int n = 50;
-  int computations = 50;
-  vector< vector<double> > res_serial(n, vector<double>(n));
+main(int argc, char *argv[])  {
+  int n = atoi(argv[1]);
+  int computations = atoi(argv[2]);
+  double h = 1.0/(n - 1);
+  double **res_serial = (double**)malloc(n * sizeof(double*));
+  for(int i = 0; i < n; i++)
+    res_serial[i] = (double*)malloc(n * sizeof(double));
   serial(res_serial, n, computations);
   for(int i = 0; i < n; i++) {
-    for(int j = 0; j < n; j++)
-      cout << res_serial[i][j] << " ";
-    cout << endl;
+    for(int j = 0; j < n; j++) {
+      //x
+      cout << i * h << " ";
+      //y
+      cout << j * h << " ";
+      //z
+      cout << res_serial[i][j];
+      cout << endl;
+    }
   }
+
   cout << endl;
-  vector< vector<double> > res_analytical(n, vector<double>(n));
+  double **res_analytical = (double**)malloc(n * sizeof(double*));
+  for(int i = 0; i < n; i++)
+    res_analytical[i] = (double*)malloc(n * sizeof(double));
   analytical(res_analytical, n, 100);
   for(int i = 0; i < n; i++) {
-    for(int j = 0; j < n; j++)
-      cout << res_analytical[i][j] << " ";
-    cout << endl;
+    for(int j = 0; j < n; j++) {
+      //x
+      cout << i * h << " ";
+      //y
+      cout << j * h << " ";
+      //z
+      cout << res_analytical[i][j];
+      cout << endl;
+    }
   } 
   cout << endl;
   cout << "Global error: " << global_error(res_analytical, res_serial, n) << endl;
